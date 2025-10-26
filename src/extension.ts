@@ -20,6 +20,14 @@ export function activate(context: vscode.ExtensionContext){
         const editor = vscode.window.activeTextEditor;
         if (!editor) return;
 
+        const doc = event.document;
+        const fname = doc.fileName || '';
+        const lang = doc.languageId || '';
+
+        if (!fname.endsWith('.p') && lang !== 'abl') {
+            return; // ignora outros arquivos
+        }
+
         if (event.contentChanges.some(change => change.text === '')) {
             return;
         }
@@ -30,8 +38,16 @@ export function activate(context: vscode.ExtensionContext){
 
         const position = editor.selection.active;
         const lineText = editor.document.lineAt(position.line).text;
-
         const textBeforeCursor = lineText.substring(0, position.character);
+
+        // --- Ignorar comentários ---
+        // Comentários em ABL podem começar com "//" ou "/*"
+        const isComment = /(^|\s)(\/\/|\/\*|\*|\/\*.*\*\/)/.test(textBeforeCursor);
+        if (isComment) return;
+
+        // --- Ignorar quando estiver entre aspas ---
+        const quoteCount = (textBeforeCursor.match(/["']/g) || []).length;
+        if (quoteCount % 2 !== 0) return; // dentro de string (número ímpar de aspas abertas)
 
         const match = textBeforeCursor.match(/([\w-]+)$/);
         const lastWord = match ? match[1] : '';
