@@ -32,7 +32,7 @@ export function activate(context: vscode.ExtensionContext){
             return;
         }
 
-        if (event.contentChanges.some(change => change.text != ' ')) {
+        if (event.contentChanges.some(change => change.text != ' ' && change.text !== '(' && change.text !== '()' && change.text !== ',')) {
             return;
         }
 
