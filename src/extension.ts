@@ -32,7 +32,12 @@ export function activate(context: vscode.ExtensionContext){
             return;
         }
 
-        if (event.contentChanges.some(change => change.text != ' ' && change.text !== '(' && change.text !== '()' && change.text !== ',')) {
+        if (event.contentChanges.some(change => change.text !== ' ' && 
+                                                change.text !== '(' &&
+                                                change.text !== '()' &&
+                                                change.text !== ',' &&
+                                                change.text !== '.' &&
+                                                change.text !== ':')) {
             return;
         }
 
@@ -40,14 +45,14 @@ export function activate(context: vscode.ExtensionContext){
         const lineText = editor.document.lineAt(position.line).text;
         const textBeforeCursor = lineText.substring(0, position.character);
 
-        // --- Ignorar coment·rios ---
-        // Coment·rios em ABL podem comeÁar com "//" ou "/*"
+        // --- Ignorar coment√°rios ---
+        // Coment√°rios em ABL podem come√ßar com "//" ou "/*"
         const isComment = /(^|\s)(\/\/|\/\*|\*|\/\*.*\*\/)/.test(textBeforeCursor);
         if (isComment) return;
 
         // --- Ignorar quando estiver entre aspas ---
         const quoteCount = (textBeforeCursor.match(/["']/g) || []).length;
-        if (quoteCount % 2 !== 0) return; // dentro de string (n˙mero Ìmpar de aspas abertas)
+        if (quoteCount % 2 !== 0) return; // dentro de string (n√∫mero √≠mpar de aspas abertas)
 
         const match = textBeforeCursor.match(/([\w-]+)$/);
         const lastWord = match ? match[1] : '';
