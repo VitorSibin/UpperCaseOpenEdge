@@ -16,6 +16,7 @@ export function activate(context: vscode.ExtensionContext){
 
     const changing = vscode.workspace.onDidChangeTextDocument((event) => {
         if (!enabled) return;
+        const edits: { range: vscode.Range; replacement: string }[] = [];
 
         const editor = vscode.window.activeTextEditor;
         if (!editor) return;
@@ -41,37 +42,47 @@ export function activate(context: vscode.ExtensionContext){
             return;
         }
 
-        const position = editor.selection.active;
-        const lineText = editor.document.lineAt(position.line).text;
-        const textBeforeCursor = lineText.substring(0, position.character);
+        editor.selections.forEach((selection,index) => {
+            const position = selection.active;
+            const lineText = editor.document.lineAt(position.line).text;
+            const textBeforeCursor = lineText.substring(0, position.character);
 
-        // --- Ignorar comentários ---
-        // Comentários em ABL podem começar com "//" ou "/*"
-        const isComment = /(^|\s)(\/\/|\/\*|\*|\/\*.*\*\/)/.test(textBeforeCursor);
-        if (isComment) return;
+            // --- Ignorar comentários ---
+            // Comentários em ABL podem começar com "//" ou "/*"
+            const isComment = /(^|\s)(\/\/|\/\*|\*|\/\*.*\*\/)/.test(textBeforeCursor);
+            if (isComment) return;
 
-        // --- Ignorar quando estiver entre aspas ---
-        const quoteCount = (textBeforeCursor.match(/["']/g) || []).length;
-        if (quoteCount % 2 !== 0) return; // dentro de string (número ímpar de aspas abertas)
+            // --- Ignorar quando estiver entre aspas ---
+            const quoteCount = (textBeforeCursor.match(/["']/g) || []).length;
+            if (quoteCount % 2 !== 0) return; // dentro de string (número ímpar de aspas abertas)
 
-        const match = textBeforeCursor.match(/([\w-]+)$/);
-        const lastWord = match ? match[1] : '';
+            const match = textBeforeCursor.match(/([\w-]+)$/);
+            const lastWord = match ? match[1] : '';
 
-        const lowerWord = lastWord.toLowerCase();
+            const lowerWord = lastWord.toLowerCase();
 
-        if (lastWord === lastWord.toUpperCase()) return;
+            if (lastWord === lastWord.toUpperCase()) return;
 
-        const found = keywords.find(
-            (k) => k.keyword.toLowerCase() === lowerWord || k.abrev.toLowerCase() === lowerWord
-        );
+            const found = keywords.find(
+                (k) => k.keyword.toLowerCase() === lowerWord || k.abrev.toLowerCase() === lowerWord
+            );
+            
+            if (found) {
+                const replacement = lowerWord === found.abrev.toLowerCase() ? found.abrev.toUpperCase() : found.keyword.toUpperCase();
 
-        if (found) {
-            const replacement = lowerWord === found.abrev.toLowerCase() ? found.abrev.toUpperCase() : found.keyword.toUpperCase();
+                editor.edit((editBuilder) => {
+                    const start = position.translate(0, -lastWord.length);
+                    const range = new vscode.Range(start, position);
+                    edits.push({range, replacement});
+                });
+            }
+        });
 
+        if (edits.length > 0) {
             editor.edit((editBuilder) => {
-                const start = position.translate(0, -lastWord.length);
-                const range = new vscode.Range(start, position);
-                editBuilder.replace(range, replacement);
+                for (const e of edits) {
+                    editBuilder.replace(e.range, e.replacement);
+                }
             });
         }
     })
