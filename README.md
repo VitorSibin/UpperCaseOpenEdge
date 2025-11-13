@@ -1,3 +1,3 @@
 # OpenEdgeUpperCase README
 
-Esta extenção tem como finalidade deixar em upperCase palavras reservadas da linguagem Openedge abl.
+Esta extensÃ£o tem como finalidade deixar em upperCase palavras reservadas da linguagem Openedge abl.
