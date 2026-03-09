@@ -4778,6 +4778,9 @@ const keywords = [
     },
     { keyword: "Y-OF",
         "abrev": "?"
+    },
+    { keyword: "LONGCHAR",
+        "abrev": "?"
     }
 ];
 
