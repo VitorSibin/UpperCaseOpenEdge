@@ -5,13 +5,9 @@ let enabled = true;
 
 export function activate(context: vscode.ExtensionContext){
 
-    const disposable = vscode.commands.registerCommand('openedgeuppercase.helloWorld', () => {
-        vscode.window.showInformationMessage('Hello World from OpenEdgeUpperCase!');
-    });
-
-    const toggleCommand = vscode.commands.registerCommand('openedgeuppercase.turnoffuppercase', () => {
+    const toggleCommand = vscode.commands.registerCommand('openedgeuppercase.toggle', () => {
         enabled = !enabled;
-        vscode.window.showInformationMessage(`Editor Watcher ${enabled ? 'Enable' : 'Disable'}`);
+        vscode.window.showInformationMessage(`OpenEdge ABL Uppercase Keywords: ${enabled ? 'Enabled' : 'Disabled'}`);
     });
 
     const changing = vscode.workspace.onDidChangeTextDocument((event) => {
@@ -87,7 +83,6 @@ export function activate(context: vscode.ExtensionContext){
         }
     })
 
-    context.subscriptions.push(disposable);
     context.subscriptions.push(changing);
     context.subscriptions.push(toggleCommand);
 }
