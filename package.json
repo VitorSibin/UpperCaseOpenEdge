@@ -1,32 +1,48 @@
 {
   "name": "openedgeuppercase",
-  "displayName": "OpenEdgeUpperCase",
-  "description": "",
-  "version": "0.0.7",
+  "displayName": "OpenEdge ABL Uppercase Keywords",
+  "description": "Automatically converts Progress OpenEdge ABL reserved words and abbreviations to uppercase while you type in .p and ABL files.",
+  "version": "0.0.8",
   "publisher": "VitorPrimoSibin",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VitorSibin/UpperCaseOpenEdge"
+  },
+  "homepage": "https://github.com/VitorSibin/UpperCaseOpenEdge",
+  "bugs": {
+    "url": "https://github.com/VitorSibin/UpperCaseOpenEdge/issues"
+  },
   "engines": {
     "vscode": "^1.101.0"
   },
   "icon": "./images/icone.png",
   "categories": [
-    "Other"
+    "Programming Languages",
+    "Formatters"
+  ],
+  "keywords": [
+    "openedge",
+    "abl",
+    "progress",
+    "progress-4gl",
+    "4gl",
+    "uppercase",
+    "keyword",
+    "formatter",
+    "vscode-extension",
+    "productivity"
   ],
   "activationEvents": [
     "onStartupFinished",
-    "onCommand:editor-watcher.helloWorld",
-    "onCommand:editor-watcher.turnoffuppercase",
-    "onDidChangeTextDocument"
+    "onLanguage:abl"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "openedgeuppercase.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "openedgeuppercase.turnoffuppercase",
-        "title": "Change State OpenEdge UpperCase"
+        "command": "openedgeuppercase.toggle",
+        "title": "OpenEdge ABL: Toggle Uppercase Keywords"
       }
     ]
   },
